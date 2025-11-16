@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VigilantAI - System Monitoring & Security</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-black text-white overflow-hidden">
+    <div class="fixed inset-0 bg-gradient-to-br from-cyan-900/20 via-black to-purple-900/20 pointer-events-none"></div>
+    
+    <div class="relative w-full h-screen flex items-center justify-center">
+        <div class="absolute inset-0 animated-grid"></div>
+        
+        <div class="relative z-10 text-center animate__animated animate__fadeIn">
+            <div class="mb-8">
+                <div class="inline-block relative">
+                    <div class="absolute inset-0 bg-gradient-to-r from-cyan-500 to-purple-500 rounded-full blur-2xl opacity-30"></div>
+                    <h1 class="relative text-6xl font-bold bg-gradient-to-r from-cyan-400 via-purple-400 to-green-400 bg-clip-text text-transparent">
+                        VigilantAI
+                    </h1>
+                </div>
+                <p class="text-xl text-gray-400 mt-4">Advanced System Monitoring & Security Platform</p>
+            </div>
+            
+            <div class="mt-12 space-y-6">
+                <div class="bg-gray-900/50 backdrop-blur-sm border border-cyan-500/30 rounded-lg p-8 max-w-md mx-auto shadow-lg shadow-cyan-500/20">
+                    <h2 class="text-2xl font-bold mb-6">Access Dashboard</h2>
+                    
+                    <div class="space-y-4">
+                        <div>
+                            <input type="text" id="username" placeholder="Username" class="w-full px-4 py-2 bg-gray-800 border border-cyan-500/50 rounded text-white placeholder-gray-500 focus:outline-none focus:border-cyan-400 focus:shadow-lg focus:shadow-cyan-500/30 transition">
+                        </div>
+                        <div>
+                            <input type="password" id="password" placeholder="Password" class="w-full px-4 py-2 bg-gray-800 border border-cyan-500/50 rounded text-white placeholder-gray-500 focus:outline-none focus:border-cyan-400 focus:shadow-lg focus:shadow-cyan-500/30 transition">
+                        </div>
+                    </div>
+                    
+                    <button onclick="login()" class="w-full mt-6 px-6 py-2 bg-gradient-to-r from-cyan-500 to-purple-500 rounded font-bold hover:shadow-lg hover:shadow-cyan-500/50 transition transform hover:scale-105">
+                        Login
+                    </button>
+                    
+                    <div class="mt-6 text-sm text-gray-400">
+                        <p>Demo: username: <strong>admin</strong> | password: <strong>admin</strong></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-12 grid grid-cols-3 gap-6 max-w-2xl mx-auto">
+                <div class="glass-card p-4 text-center">
+                    <div class="text-3xl mb-2">📊</div>
+                    <p class="text-sm">Real-Time Metrics</p>
+                </div>
+                <div class="glass-card p-4 text-center">
+                    <div class="text-3xl mb-2">🔒</div>
+                    <p class="text-sm">Security Scanning</p>
+                </div>
+                <div class="glass-card p-4 text-center">
+                    <div class="text-3xl mb-2">🤖</div>
+                    <p class="text-sm">AI Assistant</p>
+                </div>
+            </div>
+        </div>
+        
+        <canvas id="backgroundCanvas" class="absolute inset-0 w-full h-full"></canvas>
+    </div>
+    
+    <script>
+        function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            if (username && password) {
+                localStorage.setItem('user', username);
+                window.location.href = '/dashboard';
+            } else {
+                alert('Please enter credentials');
+            }
+        }
+        
+        document.getElementById('password').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') login();
+        });
+        
+        function createAnimatedBackground() {
+            const canvas = document.getElementById('backgroundCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            
+            const particles = [];
+            
+            class Particle {
+                constructor() {
+                    this.x = Math.random() * canvas.width;
+                    this.y = Math.random() * canvas.height;
+                    this.size = Math.random() * 2;
+                    this.speedX = (Math.random() - 0.5) * 0.5;
+                    this.speedY = (Math.random() - 0.5) * 0.5;
+                    this.opacity = Math.random() * 0.5;
+                }
+                
+                update() {
+                    this.x += this.speedX;
+                    this.y += this.speedY;
+                    
+                    if (this.x > canvas.width) this.x = 0;
+                    if (this.x < 0) this.x = canvas.width;
+                    if (this.y > canvas.height) this.y = 0;
+                    if (this.y < 0) this.y = canvas.height;
+                }
+                
+                draw() {
+                    ctx.fillStyle = `rgba(34, 211, 238, ${this.opacity})`;
+                    ctx.fillRect(this.x, this.y, this.size, this.size);
+                }
+            }
+            
+            for (let i = 0; i < 100; i++) {
+                particles.push(new Particle());
+            }
+            
+            function animate() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                
+                particles.forEach(p => {
+                    p.update();
+                    p.draw();
+                });
+                
+                requestAnimationFrame(animate);
+            }
+            
+            animate();
+            
+            window.addEventListener('resize', () => {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            });
+        }
+        
+        createAnimatedBackground();
+    </script>
+</body>
+</html>

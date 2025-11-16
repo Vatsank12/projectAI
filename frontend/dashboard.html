@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VigilantAI - Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-black text-white">
+    <div class="fixed inset-0 bg-gradient-to-br from-cyan-900/10 via-black to-purple-900/10 pointer-events-none"></div>
+    
+    <div class="relative z-10">
+        <div class="flex h-screen">
+            <nav class="w-64 bg-gray-900/50 backdrop-blur-md border-r border-cyan-500/30 p-6 space-y-6 overflow-y-auto sidebar">
+                <div class="text-2xl font-bold bg-gradient-to-r from-cyan-400 to-purple-400 bg-clip-text text-transparent">
+                    VigilantAI
+                </div>
+                
+                <div class="space-y-2">
+                    <a href="#" onclick="showSection('dashboard')" class="nav-item active p-3 rounded hover:bg-cyan-500/20 cursor-pointer transition">📊 Dashboard</a>
+                    <a href="#" onclick="showSection('analytics')" class="nav-item p-3 rounded hover:bg-cyan-500/20 cursor-pointer transition">📈 Analytics</a>
+                    <a href="#" onclick="showSection('reports')" class="nav-item p-3 rounded hover:bg-cyan-500/20 cursor-pointer transition">📋 Reports</a>
+                    <a href="#" onclick="showSection('processes')" class="nav-item p-3 rounded hover:bg-cyan-500/20 cursor-pointer transition">⚙️ Processes</a>
+                    <a href="#" onclick="showSection('scanner')" class="nav-item p-3 rounded hover:bg-cyan-500/20 cursor-pointer transition">🔍 Scanner</a>
+                    <a href="#" onclick="showSection('alerts')" class="nav-item p-3 rounded hover:bg-cyan-500/20 cursor-pointer transition">🚨 Alerts</a>
+                    <a href="#" onclick="showSection('notifications')" class="nav-item p-3 rounded hover:bg-cyan-500/20 cursor-pointer transition">🔔 Notifications</a>
+                    <a href="#" onclick="showSection('profile')" class="nav-item p-3 rounded hover:bg-cyan-500/20 cursor-pointer transition">👤 Profile</a>
+                    <a href="#" onclick="showSection('settings')" class="nav-item p-3 rounded hover:bg-cyan-500/20 cursor-pointer transition">⚙️ Settings</a>
+                </div>
+                
+                <div class="pt-6 border-t border-cyan-500/20">
+                    <button onclick="logout()" class="w-full px-4 py-2 bg-red-500/30 border border-red-500/50 rounded hover:bg-red-500/50 transition">
+                        Logout
+                    </button>
+                </div>
+            </nav>
+            
+            <main class="flex-1 overflow-y-auto">
+                <div class="p-8 max-w-7xl mx-auto">
+                    <div class="flex justify-between items-center mb-8">
+                        <h1 class="text-3xl font-bold">System Dashboard</h1>
+                        <button onclick="toggleAssistant()" class="floating-fab" title="Open AI Assistant">
+                            🤖
+                        </button>
+                    </div>
+                    
+                    <div id="dashboard-section" class="section">
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+                            <div class="metric-card">
+                                <div class="text-gray-400 text-sm mb-2">CPU Usage</div>
+                                <div class="text-3xl font-bold text-cyan-400" id="cpu-value">--</div>
+                                <div class="text-xs text-gray-500 mt-2">Processor</div>
+                                <div class="mt-3 h-1 bg-gray-700 rounded-full overflow-hidden">
+                                    <div class="h-full bg-gradient-to-r from-cyan-500 to-blue-500 w-0 transition-all duration-300" id="cpu-bar"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="metric-card">
+                                <div class="text-gray-400 text-sm mb-2">Memory Usage</div>
+                                <div class="text-3xl font-bold text-purple-400" id="memory-value">--</div>
+                                <div class="text-xs text-gray-500 mt-2">RAM</div>
+                                <div class="mt-3 h-1 bg-gray-700 rounded-full overflow-hidden">
+                                    <div class="h-full bg-gradient-to-r from-purple-500 to-pink-500 w-0 transition-all duration-300" id="memory-bar"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="metric-card">
+                                <div class="text-gray-400 text-sm mb-2">Disk Usage</div>
+                                <div class="text-3xl font-bold text-green-400" id="disk-value">--</div>
+                                <div class="text-xs text-gray-500 mt-2">Storage</div>
+                                <div class="mt-3 h-1 bg-gray-700 rounded-full overflow-hidden">
+                                    <div class="h-full bg-gradient-to-r from-green-500 to-emerald-500 w-0 transition-all duration-300" id="disk-bar"></div>
+                                </div>
+                            </div>
+                            
+                            <div class="metric-card">
+                                <div class="text-gray-400 text-sm mb-2">System Health</div>
+                                <div class="text-3xl font-bold text-yellow-400" id="health-value">--</div>
+                                <div class="text-xs text-gray-500 mt-2">Score</div>
+                                <div class="mt-3 h-1 bg-gray-700 rounded-full overflow-hidden">
+                                    <div class="h-full bg-gradient-to-r from-yellow-500 to-orange-500 w-0 transition-all duration-300" id="health-bar"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+                            <div class="chart-container metric-card">
+                                <h3 class="text-lg font-semibold mb-4">CPU & Memory History</h3>
+                                <canvas id="performanceChart"></canvas>
+                            </div>
+                            
+                            <div class="chart-container metric-card">
+                                <h3 class="text-lg font-semibold mb-4">Network Activity</h3>
+                                <canvas id="networkChart"></canvas>
+                            </div>
+                        </div>
+                        
+                        <div class="metric-card">
+                            <h3 class="text-lg font-semibold mb-4">System Information</h3>
+                            <div id="system-info" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                                <div>
+                                    <div class="text-gray-400 text-sm">CPU Cores</div>
+                                    <div class="text-xl font-bold text-cyan-400" id="cpu-cores">--</div>
+                                </div>
+                                <div>
+                                    <div class="text-gray-400 text-sm">Total RAM</div>
+                                    <div class="text-xl font-bold text-purple-400" id="total-ram">--</div>
+                                </div>
+                                <div>
+                                    <div class="text-gray-400 text-sm">Uptime</div>
+                                    <div class="text-xl font-bold text-green-400" id="uptime">--</div>
+                                </div>
+                                <div>
+                                    <div class="text-gray-400 text-sm">Disk Total</div>
+                                    <div class="text-xl font-bold text-yellow-400" id="disk-total">--</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="processes-section" class="section hidden">
+                        <div class="metric-card">
+                            <h3 class="text-lg font-semibold mb-4">Top Processes</h3>
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm">
+                                    <thead>
+                                        <tr class="border-b border-cyan-500/20">
+                                            <th class="text-left py-2 px-4">Process Name</th>
+                                            <th class="text-left py-2 px-4">PID</th>
+                                            <th class="text-left py-2 px-4">Memory %</th>
+                                            <th class="text-left py-2 px-4">CPU %</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="processes-list"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="scanner-section" class="section hidden">
+                        <div class="metric-card">
+                            <h3 class="text-lg font-semibold mb-4">File Security Scanner</h3>
+
+                            <!-- Scan Mode Tabs -->
+                            <div class="flex gap-2 mb-6 bg-gray-800/50 p-1 rounded-lg">
+                                <button onclick="setScanMode('files')" id="files-mode-btn" class="flex-1 py-2 px-4 rounded-md text-sm font-medium transition active bg-cyan-500/20 text-cyan-300">
+                                    📄 Files
+                                </button>
+                                <button onclick="setScanMode('directory')" id="directory-mode-btn" class="flex-1 py-2 px-4 rounded-md text-sm font-medium transition text-gray-400 hover:text-white">
+                                    📂 Directory
+                                </button>
+                            </div>
+
+                            <!-- File Upload Mode -->
+                            <div id="files-mode" class="scan-mode">
+                                <div class="border-2 border-dashed border-cyan-500/50 rounded-lg p-8 text-center cursor-pointer hover:border-cyan-400 transition mb-6" id="dropZone">
+                                    <div class="text-4xl mb-2">📁</div>
+                                    <p class="text-lg mb-2">Drag and drop files here</p>
+                                    <p class="text-gray-400">or click to browse</p>
+                                    <input type="file" id="fileInput" multiple hidden>
+                                </div>
+
+                                <div id="file-queue" class="mb-6"></div>
+                            </div>
+
+                            <!-- Directory Scan Mode -->
+                            <div id="directory-mode" class="scan-mode hidden">
+                                <div class="border-2 border-dashed border-purple-500/50 rounded-lg p-8 text-center cursor-pointer hover:border-purple-400 transition mb-6" id="directoryZone">
+                                    <div class="text-4xl mb-2">🗂️</div>
+                                    <p class="text-lg mb-2">Click to select directory</p>
+                                    <p class="text-gray-400">Scan entire folders for threats</p>
+                                    <input type="file" id="directoryInput" webkitdirectory multiple hidden>
+                                </div>
+
+                                <div id="directory-info" class="mb-6 hidden">
+                                    <div class="bg-purple-500/10 border border-purple-500/30 rounded-lg p-4">
+                                        <h4 class="text-sm font-semibold mb-2 text-purple-300">Selected Directory</h4>
+                                        <p id="selected-directory" class="text-sm text-gray-300"></p>
+                                        <div class="flex gap-2 mt-3">
+                                            <button onclick="scanSelectedDirectory()" class="bg-purple-500/20 hover:bg-purple-500/30 text-purple-300 px-4 py-2 rounded text-sm transition">
+                                                🔍 Scan Directory
+                                            </button>
+                                            <button onclick="clearDirectorySelection()" class="bg-red-500/20 hover:bg-red-500/30 text-red-300 px-4 py-2 rounded text-sm transition">
+                                                Clear
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="scan-results" class="space-y-4"></div>
+                        </div>
+                    </div>
+                    
+                    <div id="alerts-section" class="section hidden">
+                        <div class="metric-card">
+                            <h3 class="text-lg font-semibold mb-4">Security Alerts</h3>
+                            <div id="alerts-list" class="space-y-2"></div>
+                        </div>
+                    </div>
+                    
+                    <div id="analytics-section" class="section hidden">
+                        <div class="metric-card mb-6">
+                            <h3 class="text-lg font-semibold mb-6">Advanced Analytics</h3>
+                            <div class="chart-row">
+                                <div class="chart-container metric-card">
+                                    <h4 class="text-base font-semibold mb-4">CPU Usage Trend</h4>
+                                    <canvas id="cpuTrendChart"></canvas>
+                                </div>
+                                <div class="chart-container metric-card">
+                                    <h4 class="text-base font-semibold mb-4">Memory Trend</h4>
+                                    <canvas id="memoryTrendChart"></canvas>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="metric-card">
+                            <h3 class="text-lg font-semibold mb-4">System Statistics</h3>
+                            <div class="stat-grid">
+                                <div class="stat-item">
+                                    <span class="stat-label">Avg CPU Usage</span>
+                                    <span class="stat-value" id="avg-cpu">--</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Peak CPU Usage</span>
+                                    <span class="stat-value" id="peak-cpu">--</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Avg Memory Usage</span>
+                                    <span class="stat-value" id="avg-memory">--</span>
+                                </div>
+                                <div class="stat-item">
+                                    <span class="stat-label">Peak Memory Usage</span>
+                                    <span class="stat-value" id="peak-memory">--</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="reports-section" class="section hidden">
+                        <div class="metric-card mb-6">
+                            <h3 class="text-lg font-semibold mb-6">System Reports</h3>
+                            
+                            <div class="tab-buttons">
+                                <button class="tab-button active" onclick="switchReportTab('performance')">Performance</button>
+                                <button class="tab-button" onclick="switchReportTab('security')">Security</button>
+                                <button class="tab-button" onclick="switchReportTab('health')">Health</button>
+                            </div>
+
+                            <div id="performance-tab" class="tab-content active">
+                                <div class="report-card">
+                                    <h4>Processor Performance</h4>
+                                    <div class="stat-row">
+                                        <span>Current Usage</span>
+                                        <span id="report-cpu-current">--</span>
+                                    </div>
+                                    <div class="stat-row">
+                                        <span>Average (Last Hour)</span>
+                                        <span id="report-cpu-avg">--</span>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" id="report-cpu-bar" style="width: 0%"></div>
+                                    </div>
+                                </div>
+
+                                <div class="report-card">
+                                    <h4>Memory Performance</h4>
+                                    <div class="stat-row">
+                                        <span>Current Usage</span>
+                                        <span id="report-mem-current">--</span>
+                                    </div>
+                                    <div class="stat-row">
+                                        <span>Average (Last Hour)</span>
+                                        <span id="report-mem-avg">--</span>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill" id="report-mem-bar" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="security-tab" class="tab-content">
+                                <div class="report-card">
+                                    <h4>Security Status</h4>
+                                    <div class="stat-row">
+                                        <span>Files Scanned</span>
+                                        <span id="report-files-scanned">0</span>
+                                    </div>
+                                    <div class="stat-row">
+                                        <span>Threats Detected</span>
+                                        <span id="report-threats-detected" style="color: #ef4444;">0</span>
+                                    </div>
+                                    <div class="stat-row">
+                                        <span>Last Scan</span>
+                                        <span id="report-last-scan">Never</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div id="health-tab" class="tab-content">
+                                <div class="report-card">
+                                    <h4>System Health Report</h4>
+                                    <div class="stat-row">
+                                        <span>Overall Health Score</span>
+                                        <span id="report-health-score">--</span>
+                                    </div>
+                                    <div class="stat-row">
+                                        <span>Uptime</span>
+                                        <span id="report-uptime">--</span>
+                                    </div>
+                                    <div class="stat-row">
+                                        <span>System Status</span>
+                                        <span id="report-status" style="color: #10b981;">Healthy</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="notifications-section" class="section hidden">
+                        <div class="metric-card">
+                            <div class="flex justify-between items-center mb-6">
+                                <h3 class="text-lg font-semibold">Notifications</h3>
+                                <button onclick="clearAllNotifications()" class="btn-secondary text-sm px-3 py-1">Clear All</button>
+                            </div>
+                            <div id="notifications-list" class="space-y-3"></div>
+                        </div>
+                    </div>
+
+                    <div id="profile-section" class="section hidden">
+                        <div class="profile-section">
+                            <div class="profile-header">
+                                <div class="profile-avatar" id="profile-avatar">👤</div>
+                                <div class="profile-info">
+                                    <h2 id="profile-username">Administrator</h2>
+                                    <p id="profile-status">System Administrator</p>
+                                    <p id="profile-join-date" class="text-xs text-gray-500 mt-2">Member since 2024</p>
+                                </div>
+                            </div>
+
+                            <div class="tab-buttons">
+                                <button class="tab-button active" onclick="switchProfileTab('personal')">Personal</button>
+                                <button class="tab-button" onclick="switchProfileTab('preferences')">Preferences</button>
+                                <button class="tab-button" onclick="switchProfileTab('security')">Security</button>
+                            </div>
+
+                            <div id="personal-tab" class="tab-content active">
+                                <div class="form-group">
+                                    <label>Full Name</label>
+                                    <input type="text" id="fullname" placeholder="Your full name" value="Administrator">
+                                </div>
+                                <div class="form-group">
+                                    <label>Email</label>
+                                    <input type="email" id="email" placeholder="your@email.com">
+                                </div>
+                                <div class="form-group">
+                                    <label>Bio</label>
+                                    <textarea id="bio" placeholder="Tell us about yourself" rows="4"></textarea>
+                                </div>
+                                <button onclick="saveProfileChanges()" class="btn-primary">Save Changes</button>
+                            </div>
+
+                            <div id="preferences-tab" class="tab-content">
+                                <div class="form-group">
+                                    <label>Theme Preference</label>
+                                    <select id="theme-select">
+                                        <option>Dark (Cyberpunk)</option>
+                                        <option>Light</option>
+                                        <option>Auto</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label>Notification Sound</label>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" checked id="notification-sound">
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                                <div class="form-group">
+                                    <label>Email Notifications</label>
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="email-notifications">
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                </div>
+                                <button onclick="savePreferences()" class="btn-primary">Save Preferences</button>
+                            </div>
+
+                            <div id="security-tab" class="tab-content">
+                                <div class="form-group">
+                                    <label>Current Password</label>
+                                    <input type="password" id="current-password" placeholder="Enter current password">
+                                </div>
+                                <div class="form-group">
+                                    <label>New Password</label>
+                                    <input type="password" id="new-password" placeholder="Enter new password">
+                                </div>
+                                <div class="form-group">
+                                    <label>Confirm Password</label>
+                                    <input type="password" id="confirm-password" placeholder="Confirm new password">
+                                </div>
+                                <button onclick="changePassword()" class="btn-primary">Change Password</button>
+                                <p class="text-xs text-gray-400 mt-4">Last login: <span id="last-login">Just now</span></p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="settings-section" class="section hidden">
+                        <div class="metric-card">
+                            <h3 class="text-lg font-semibold mb-6">Settings & Configuration</h3>
+                            
+                            <div class="space-y-6">
+                                <div class="flex justify-between items-center pb-4 border-b border-cyan-500/20">
+                                    <div>
+                                        <h4 class="font-semibold">Monitoring Interval</h4>
+                                        <p class="text-sm text-gray-400">Update frequency for metrics</p>
+                                    </div>
+                                    <div class="flex items-center gap-3">
+                                        <input type="range" min="500" max="5000" value="1000" class="w-32" id="monitoringInterval" oninput="updateRangeDisplay('monitoringInterval', 'ms')">
+                                        <span class="text-cyan-400 font-semibold min-w-16" id="monitoringInterval-display">1000ms</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex justify-between items-center pb-4 border-b border-cyan-500/20">
+                                    <div>
+                                        <h4 class="font-semibold">CPU Alert Threshold</h4>
+                                        <p class="text-sm text-gray-400">Alert when CPU exceeds this %</p>
+                                    </div>
+                                    <div class="flex items-center gap-3">
+                                        <input type="range" min="10" max="95" value="80" class="w-32" id="cpuThreshold" oninput="updateRangeDisplay('cpuThreshold', '%')">
+                                        <span class="text-cyan-400 font-semibold min-w-16" id="cpuThreshold-display">80%</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex justify-between items-center pb-4 border-b border-cyan-500/20">
+                                    <div>
+                                        <h4 class="font-semibold">Memory Alert Threshold</h4>
+                                        <p class="text-sm text-gray-400">Alert when memory exceeds this %</p>
+                                    </div>
+                                    <div class="flex items-center gap-3">
+                                        <input type="range" min="10" max="95" value="85" class="w-32" id="memoryThreshold" oninput="updateRangeDisplay('memoryThreshold', '%')">
+                                        <span class="text-cyan-400 font-semibold min-w-16" id="memoryThreshold-display">85%</span>
+                                    </div>
+                                </div>
+                                
+                                <div class="flex justify-between items-center">
+                                    <div>
+                                        <h4 class="font-semibold">Enable Sound Alerts</h4>
+                                        <p class="text-sm text-gray-400">Play sound for critical alerts</p>
+                                    </div>
+                                    <label class="relative inline-block w-12 h-6 bg-gray-700 rounded-full cursor-pointer">
+                                        <input type="checkbox" checked class="sr-only peer">
+                                        <span class="absolute inset-0 rounded-full bg-cyan-500 opacity-0 peer-checked:opacity-100 transition"></span>
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+        
+        <div id="assistant-panel" class="assistant-panel">
+            <div class="flex justify-between items-center mb-4 pb-4 border-b border-cyan-500/20">
+                <h3 class="font-semibold">VigilantAI Assistant</h3>
+                <button onclick="toggleAssistant()" class="text-gray-400 hover:text-white">✕</button>
+            </div>
+            <div id="chat-messages" class="h-96 overflow-y-auto mb-4 space-y-3"></div>
+            <div class="flex gap-2">
+                <input type="text" id="assistant-input" placeholder="Ask me something..." class="flex-1 px-3 py-2 bg-gray-800 border border-cyan-500/50 rounded text-white text-sm placeholder-gray-500 focus:outline-none focus:border-cyan-400">
+                <button onclick="sendAssistantMessage()" class="px-4 py-2 bg-cyan-500/30 border border-cyan-500 rounded hover:bg-cyan-500/50 transition text-sm">Send</button>
+            </div>
+        </div>
+    </div>
+    
+    <script src="js/main.js"></script>
+    <script src="js/charts.js"></script>
+    <script src="js/assistant.js"></script>
+</body>
+</html>
