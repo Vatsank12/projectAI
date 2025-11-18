@@ -7,7 +7,7 @@ from pathlib import Path
 import sys
 
 try:
-    from routers import metrics, scanner, processes, alerts, assistant, profile
+    from routers import metrics, scanner, processes, alerts, profile
     from core.websocket_manager import ConnectionManager
 except ImportError as e:
     print(f"Error importing modules: {e}")
@@ -41,7 +41,6 @@ app.include_router(metrics.router)
 app.include_router(scanner.router)
 app.include_router(processes.router)
 app.include_router(alerts.router)
-app.include_router(assistant.router)
 app.include_router(profile.router)
 
 @app.get("/", tags=["pages"])

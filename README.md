@@ -1,277 +1,247 @@
-# VigilantAI - Advanced System Monitoring & Security Dashboard
+# VigilantAI
 
-A modern, real-time system monitoring and security dashboard built with FastAPI, Tailwind CSS, and Chart.js. Features real-time metrics tracking, file security scanning, process monitoring, AI-powered assistant with Groq integration, and alerting system.
+Advanced System Monitoring & Security Dashboard
 
-## 🎨 Features
+## Overview
 
-### Dashboard
-- **Real-Time Metrics**: CPU, Memory, Disk, and Network usage tracking
-- **Interactive Charts**: Live-updating performance graphs with Chart.js
-- **System Health Score**: AI-calculated health indicator
-- **System Information**: CPU cores, RAM, uptime, and storage info
+VigilantAI is a comprehensive system monitoring and security dashboard built with FastAPI (backend) and HTML/CSS/JavaScript (frontend). It provides real-time monitoring of system metrics, process management, file scanning for threats, and alert management. The application is designed for system administrators and security professionals to keep track of system health and detect potential threats.
 
-### File Scanner
-- **Drag & Drop Interface**: Easy file scanning
-- **Concurrent Processing**: Optimized scanning with 4-file batch processing
-- **Threat Detection**: Analyzes files for suspicious indicators
-- **Hash Analysis**: SHA256 file hashing for verification
-- **Directory Scanning**: Full directory tree scanning with progress tracking
-- **Abort Functionality**: Cancel scans in progress
-- **Quarantine System**: Isolate suspicious files
+## Features
 
-### Process Monitor
-- **Top Processes**: View the most resource-intensive processes
-- **Real-Time Updates**: Process list refreshes every 2 seconds
-- **Process Details**: Drill down into individual process information
-- **Process Management**: Kill processes directly from dashboard
+- **Real-time Metrics Monitoring**: Track CPU usage, memory consumption, disk I/O, network activity, and system temperature in real-time using WebSockets for live updates.
+- **Process Management**: View, monitor, and control running processes on the system, including the ability to terminate or kill processes.
+- **File Security Scanner**: Scan individual files or entire directories for potential threats based on file extensions, sizes, locations, and other indicators. Includes quarantine functionality for suspicious files.
+- **Alerts System**: Create, view, and manage alerts for system events, security issues, performance problems, and process-related notifications.
+- **User Authentication**: Simple login system for accessing the dashboard (demo credentials provided).
+- **Responsive Web Dashboard**: Clean, modern web interface built with HTML, CSS, and JavaScript for easy monitoring and management.
+- **RESTful API**: Comprehensive API with automatic documentation via Swagger UI and ReDoc.
+- **Docker Support**: Containerized deployment using Docker and Docker Compose for easy setup and scalability.
+- **Health Checks**: Built-in health endpoints for monitoring application status.
 
-### Security Alerts
-- **Real-Time Alerts**: Critical, High, Medium, Low severity levels
-- **Color-Coded**: Visual indicators for alert priority
-- **Alert History**: View recent security events
-- **Auto-Dismiss**: Notifications automatically clear
-
-### AI Assistant
-- **Groq AI Integration**: Powered by Groq's Llama-3.1-8B model for intelligent responses
-- **Smart Chat Panel**: Get system insights and recommendations
-- **Health Analysis**: AI provides health insights and recommendations
-- **Overheating Detection**: Automatic PC overheating analysis and solutions
-- **Quick Actions**: One-click access to common tasks
-- **Chat History**: Persistent conversation history
-- **Fallback System**: Local AI when Groq is unavailable
-
-### Settings
-- **Monitoring Interval**: Adjust metrics update frequency
-- **Alert Thresholds**: Customize CPU and Memory alert limits
-- **Sound Alerts**: Enable/disable notification sounds
-- **Theme Support**: Dark/cyberpunk theme options
-
-## 🛠️ Tech Stack
-
-**Backend:**
-- Python 3.12+
-- FastAPI
-- psutil (system monitoring)
-- Groq AI (intelligent assistant)
-- python-dotenv (environment management)
-- SQLite (data persistence)
-- WebSockets (real-time updates)
-
-**Frontend:**
-- HTML5
-- Tailwind CSS
-- Vanilla JavaScript
-- Chart.js (data visualization)
-- Animate.css (animations)
-
-## 📋 Installation
+## Installation
 
 ### Prerequisites
-- Python 3.12 or higher
-- pip (Python package manager)
-- Groq API key (free at https://console.groq.com/keys)
 
-### Setup
+- Python 3.11 or higher
+- Docker and Docker Compose (optional, for containerized deployment)
+- Git (for cloning the repository)
 
-1. **Clone/Extract the project**
-```bash
-cd VigilantAI
-```
+### Local Installation
 
-2. **Configure Environment**
-```bash
-# Copy the example environment file
-cp .env.example .env
+1. **Clone the repository**:
+   ```bash
+   git clone https://github.com/Vatsank12/projectAI.git
+   cd VigilantAI
+   ```
 
-# Edit .env and add your Groq API key
-# Get free API key at: https://console.groq.com/keys
-```
+2. **Install Python dependencies**:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-3. **Create virtual environment (recommended)**
-```bash
-python -m venv venv
+3. **Run the application**:
+   ```bash
+   python backend/main.py
+   ```
+   Or use the provided batch file:
+   ```bash
+   run.bat
+   ```
 
-# On Windows
-venv\Scripts\activate
+The application will start on `http://localhost:8000`.
 
-# On macOS/Linux
-source venv/bin/activate
-```
+### Docker Installation
 
-4. **Install dependencies**
-```bash
-pip install -r requirements.txt
-```
+1. **Build and run with Docker Compose**:
+   ```bash
+   docker-compose up --build
+   ```
 
-## 🚀 Running the Application
+This will start the application and an nginx proxy, accessible at `http://localhost:80`.
 
-1. **Start the backend server**
-```bash
-cd backend
-python main.py
-```
+## Usage
 
-The server will start at `http://localhost:8000`
+1. **Access the Dashboard**:
+   Open your browser and navigate to `http://localhost:8000` (or `http://localhost:80` if using Docker).
 
-2. **Open in browser**
-```
-http://localhost:8000
-```
+2. **Login**:
+   Use the demo credentials:
+   - Username: `admin`
+   - Password: `admin`
 
-3. **Login**
-- Username: `admin`
-- Password: `admin`
+3. **Navigate the Dashboard**:
+   - **Home**: Overview of system metrics
+   - **Processes**: Manage running processes
+   - **Scanner**: Scan files and directories for threats
+   - **Alerts**: View and manage system alerts
 
-## 📁 Project Structure
+4. **API Documentation**:
+   - Swagger UI: `http://localhost:8000/docs`
+   - ReDoc: `http://localhost:8000/redoc`
 
-```
-VigilantAI/
-├── backend/
-│   ├── main.py              # FastAPI application entry point
-│   ├── requirements.txt      # Python dependencies
-│   ├── routers/
-│   │   ├── metrics.py       # System metrics endpoints
-│   │   ├── scanner.py       # File scanning endpoints
-│   │   ├── processes.py     # Process monitoring endpoints
-│   │   ├── alerts.py        # Alert management
-│   │   └── assistant.py     # AI assistant endpoints
-│   ├── core/
-│   │   └── websocket_manager.py  # WebSocket connection manager
-│   └── db/
-│       └── models.py        # Database models
-├── frontend/
-│   ├── index.html           # Login page
-│   ├── dashboard.html       # Main dashboard
-│   ├── styles.css           # Global styles & animations
-│   └── js/
-│       ├── main.js          # Core functionality
-│       ├── charts.js        # Chart.js integration
-│       └── assistant.js     # AI assistant logic
-└── README.md
-```
-
-## 🎯 API Endpoints
+## API Endpoints
 
 ### Metrics
-- `GET /api/metrics/current` - Get current system metrics
-- `WS /api/metrics/ws/{client_id}` - WebSocket for real-time metrics
-
-### Scanner
-- `GET /api/scanner/files` - List scanned files
-- `POST /api/scanner/scan` - Scan a single file
-- `POST /api/scanner/batch-scan` - Scan multiple files concurrently
-- `POST /api/scanner/scan-directory` - Scan entire directory tree
-- `GET /api/scanner/progress` - Get scan progress
-- `POST /api/scanner/abort` - Abort current scan
-- `GET /api/scanner/quarantine` - Get quarantined files
-- `POST /api/scanner/quarantine/{hash}` - Quarantine a file
-- `DELETE /api/scanner/quarantine/{hash}` - Restore from quarantine
+- `GET /api/metrics/current` - Retrieve current system metrics
+- `WS /api/metrics/ws/{client_id}` - WebSocket endpoint for real-time metrics streaming
 
 ### Processes
-- `GET /api/processes/list` - Get top processes
-- `GET /api/processes/details/{pid}` - Get process details
-- `POST /api/processes/kill/{pid}` - Kill a process
-- `GET /api/processes/system-info` - Get system information
+- `GET /api/processes/` - List all running processes
+- `GET /api/processes/{pid}` - Get detailed information about a specific process
+- `POST /api/processes/{pid}/kill` - Forcefully terminate a process
+- `POST /api/processes/{pid}/terminate` - Gracefully terminate a process
+
+### Scanner
+- `POST /api/scanner/scan` - Scan an uploaded file for threats
+- `POST /api/scanner/scan-directory` - Initiate a directory scan
+- `POST /api/scanner/batch-scan` - Scan multiple uploaded files
+- `GET /api/scanner/files` - Retrieve list of scanned files
+- `GET /api/scanner/quarantine` - View quarantined files
+- `GET /api/scanner/progress` - Check scan progress
+- `POST /api/scanner/abort` - Abort an ongoing scan
+- `POST /api/scanner/quarantine/{file_hash}` - Quarantine a file
+- `DELETE /api/scanner/quarantine/{file_hash}` - Restore a file from quarantine
 
 ### Alerts
 - `GET /api/alerts/` - Get all alerts
 - `GET /api/alerts/unread` - Get unread alerts
-- `POST /api/alerts/{id}/read` - Mark alert as read
-- `DELETE /api/alerts/{id}` - Delete alert
+- `POST /api/alerts/create` - Create a new alert
+- `POST /api/alerts/{alert_id}/read` - Mark an alert as read
+- `DELETE /api/alerts/{alert_id}` - Delete an alert
+- `DELETE /api/alerts/clear-all` - Clear all alerts
 
-### Assistant
-- `POST /api/assistant/message` - Send message to AI
-- `GET /api/assistant/history` - Get conversation history
-- `GET /api/assistant/health-insight` - Get health insights
-- `GET /api/assistant/quick-actions` - Get quick actions
+### Health and Info
+- `GET /health` - Application health check
+- `GET /info` - Application information
 
-## 🎨 UI Themes
+## Configuration
 
-The dashboard features a modern cyberpunk theme with:
-- **Neon cyan, purple, and green** accent colors
-- **Glassmorphism** effects with blur backgrounds
-- **Smooth animations** and transitions
-- **Responsive design** for all screen sizes
-- **Dark mode** optimized for eye comfort
+The application uses environment variables for configuration (defined in `docker-compose.yml` for Docker deployments):
 
-## 🔐 Security Notes
+- `ENVIRONMENT`: Set to `production` for production deployments
+- `HOST`: Host address (default: `0.0.0.0`)
+- `PORT`: Port number (default: `8000`)
 
-- Default credentials (admin/admin) should be changed in production
-- File scanner uses SHA256 hashing for verification
-- Suspicious files are quarantined with threat scoring
-- System metrics are collected using psutil safely
-- CORS is enabled for development
+## Deployment
 
-## ⚙️ Configuration
+### Production Deployment
 
-Edit `backend/main.py` to configure:
-- **Port**: Change `8000` to desired port
-- **Host**: Change `0.0.0.0` to specific IP
-- **CORS**: Modify allowed origins for production
+1. **Using Docker Compose**:
+   ```bash
+   docker-compose up -d
+   ```
 
-## 📊 Monitoring Capabilities
+2. **Environment Variables**:
+   Set `ENVIRONMENT=production` in your environment or `docker-compose.yml`.
 
-- **CPU Usage**: Real-time processor utilization
-- **Memory**: RAM usage and available memory
-- **Disk**: Storage usage and I/O statistics
-- **Network**: Upload/download speeds and packet data
-- **Temperature**: System temperature monitoring
-- **Processes**: CPU and memory per-process breakdown
+3. **Nginx Proxy**:
+   The Docker setup includes an nginx container for reverse proxy and static file serving.
 
-## 🐛 Troubleshooting
+### Manual Deployment
 
-**Port already in use:**
-```bash
-python main.py --port 8001
+1. Install dependencies and run the application as described in the installation section.
+2. Use a process manager like `systemd` or `supervisor` for production.
+3. Configure a reverse proxy (nginx/apache) for static file serving and SSL termination.
+
+## Development
+
+### Project Structure
+```
+VigilantAI/
+├── backend/
+│   ├── main.py              # FastAPI application entry point
+│   ├── config.py            # Configuration settings
+│   ├── core/
+│   │   └── websocket_manager.py  # WebSocket connection management
+│   └── routers/
+│       ├── metrics.py       # Metrics monitoring endpoints
+│       ├── processes.py     # Process management endpoints
+│       ├── scanner.py       # File scanning endpoints
+│       ├── alerts.py        # Alert management endpoints
+│       └── profile.py       # User profile endpoints
+├── frontend/
+│   ├── index.html           # Login page
+│   ├── dashboard.html       # Main dashboard
+│   ├── styles.css           # CSS styles
+│   └── js/
+│       ├── main.js          # Main JavaScript
+│       ├── charts.js        # Chart rendering
+│       └── assistant.js     # AI assistant functionality
+├── requirements.txt         # Python dependencies
+├── Dockerfile               # Docker image definition
+├── docker-compose.yml       # Docker Compose configuration
+├── run.bat                  # Windows batch script for running
+├── verify_setup.py          # Setup verification script
+└── .gitignore               # Git ignore file
 ```
 
-**AI Assistant not responding intelligently:**
-- Check that your Groq API key is correctly set in `.env`
-- Verify the key is valid at https://console.groq.com/keys
-- The system falls back to local AI if Groq is unavailable
+### Running Tests
 
-**Scan abort button not working:**
-- The abort functionality now properly cancels both frontend and backend operations
-- Click the abort button during scanning to stop the process
+Currently, no automated tests are implemented. Manual testing can be performed by:
 
-**Slow scanning performance:**
-- The scanner now processes files concurrently in batches of 4
-- Large directories may still take time due to file I/O operations
-- Use the abort button if you need to stop a long scan
+1. Running the application locally
+2. Testing API endpoints using the Swagger UI
+3. Verifying frontend functionality in the browser
 
-**Permission denied errors:**
-- Run as administrator (Windows) or with sudo (Linux/macOS)
-- Some process operations require elevated privileges
+### Code Style
 
-**Frontend not loading:**
-- Check that frontend files are in the `frontend/` directory
-- Clear browser cache (Ctrl+Shift+Delete)
-- Check browser console for errors (F12)
+- Follow PEP 8 for Python code
+- Use meaningful variable and function names
+- Add docstrings to functions and classes
+- Keep functions small and focused on single responsibilities
 
-## 📝 Future Enhancements
+## Contributing
 
-- [ ] User authentication system
-- [ ] Database persistence for alerts and scan history
-- [ ] Email notifications
-- [ ] Custom alert rules
-- [ ] Performance analytics
-- [ ] Export reports
-- [ ] Mobile app
-- [ ] Dark/Light theme toggle
-- [ ] Multi-user support
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/your-feature-name`
+3. Make your changes and commit: `git commit -am 'Add some feature'`
+4. Push to the branch: `git push origin feature/your-feature-name`
+5. Submit a pull request
 
-## 📄 License
+### Guidelines
+- Ensure code quality and add comments where necessary
+- Test your changes thoroughly
+- Update documentation if needed
+- Follow the existing code style
 
-This project is provided as-is for educational and personal use.
+## Security Considerations
 
-## 👤 Author
+- The demo credentials should be changed in production
+- Implement proper authentication and authorization
+- Use HTTPS in production
+- Regularly update dependencies for security patches
+- Monitor file permissions and access controls
 
-VigilantAI Development Team
+## Troubleshooting
 
-## 💬 Support
+### Common Issues
 
-For issues or questions, please check the documentation or contact support.
+1. **Frontend not loading**: Ensure the `frontend` directory exists and contains the required files.
+2. **WebSocket connection issues**: Check firewall settings and ensure port 8000 is open.
+3. **Permission errors**: Run the application with appropriate permissions for system monitoring.
+4. **Docker build failures**: Ensure Docker is properly installed and has access to the project directory.
 
----
+### Logs
 
-**Start monitoring and securing your system today with VigilantAI! 🚀**
+Application logs are output to the console. For Docker deployments, use:
+```bash
+docker-compose logs vigilantai
+```
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE file for details.
+
+## Support
+
+For support, please open an issue on the GitHub repository or contact the maintainers.
+
+## Roadmap
+
+- [ ] Enhanced user authentication and role-based access control
+- [ ] Advanced threat detection algorithms
+- [ ] Integration with external security tools
+- [ ] Mobile-responsive dashboard improvements
+- [ ] Automated alerting via email/SMS
+- [ ] Historical data storage and analytics
+- [ ] Plugin system for extensibility

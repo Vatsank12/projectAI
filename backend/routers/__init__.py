@@ -1,3 +1,3 @@
-from . import metrics, scanner, processes, alerts, assistant
+from . import metrics, scanner, processes, alerts
 
-__all__ = ["metrics", "scanner", "processes", "alerts", "assistant"]
+__all__ = ["metrics", "scanner", "processes", "alerts"]
